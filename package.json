@@ -1,21 +1,35 @@
 {
   "name": "forge-cli",
-  "version": "1.0.0",
-  "description": "",
+  "version": "4.0.4",
+  "description": "AI-powered Git Release & Automation Tool",
   "main": "index.js",
-  "scripts": {
-    "build": "node -e \"\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "type": "module",
+  "bin": {
+    "forge-cli": "index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "files": [
+    "index.js",
+    "src/"
+  ],
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "cli",
+    "git",
+    "ai",
+    "automation"
+  ],
+  "author": "Thevindu W.",
+  "license": "MIT",
   "dependencies": {
-    "@clack/prompts": "^1.1.0",
-    "commander": "^14.0.3",
-    "dotenv": "^17.3.1",
-    "openai": "^6.27.0",
-    "picocolors": "^1.1.1"
+    "@clack/prompts": "^0.7.0",
+    "commander": "^11.0.0",
+    "dotenv": "^16.3.0",
+    "openai": "^4.0.0",
+    "picocolors": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

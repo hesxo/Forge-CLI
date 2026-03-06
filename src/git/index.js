@@ -1,58 +1,120 @@
-import { shGet, shRun } from "../utils/shell.js";
+import { sh } from "../utils/shell.js";
 
-export function isGitRepo() {
-  try {
-    return shGet("git rev-parse --is-inside-work-tree") === "true";
-  } catch {
-    return false;
-  }
-}
+/**
+ * Git helper functions
+ */
+export const git = {
+  isRepo: () => sh("git rev-parse --is-inside-work-tree", true) === "true",
 
-export function getCurrentBranch() {
-  return shGet("git branch --show-current");
-}
+  branch: () => {
+    if (!git.isRepo()) return "no-git";
+    const b = sh("git symbolic-ref --short -q HEAD", true);
+    if (b) return b;
+    const d = sh("git rev-parse --short HEAD", true);
+    return d ? `detached@${d}` : "unborn";
+  },
 
-export function getRemoteUrl() {
-  return shGet("git config --get remote.origin.url");
-}
+  defaultBranch: () => {
+    if (!git.isRepo()) return null;
+    try {
+      sh("git rev-parse --verify origin/main");
+      return "origin/main";
+    } catch {
+      try {
+        sh("git rev-parse --verify origin/master");
+        return "origin/master";
+      } catch {
+        return "main";
+      }
+    }
+  },
 
-export function getStagedDiff() {
-  return shGet("git diff --cached");
-}
+  commitInfo: (ref) => {
+    try {
+      const out = sh(`git log -1 --format="%h|%s|%ar" ${ref}`, true);
+      if (!out) return null;
+      const [hash, msg, time] = out.split("|");
+      return { hash, msg, time };
+    } catch {
+      return null;
+    }
+  },
 
-export function getRecentCommits(limit = 20) {
-  return shGet(`git log --oneline -n ${limit}`);
-}
+  commitsBehind: (target) => {
+    try {
+      return sh(`git rev-list --count HEAD..${target}`, true);
+    } catch {
+      return "0";
+    }
+  },
 
-export function getLastTag() {
-  try {
-    return shGet("git describe --tags --abbrev=0");
-  } catch {
-    return "";
-  }
-}
+  upstreamBehindCount: () => {
+    if (!git.isRepo()) return 0;
+    try {
+      const count = sh("git rev-list --count HEAD..@{u}", true);
+      return parseInt(count) || 0;
+    } catch {
+      return 0;
+    }
+  },
 
-export function getCommitsSinceTag(tag) {
-  if (!tag) return getRecentCommits(20);
-  return shGet(`git log ${tag}..HEAD --oneline`);
-}
+  user: () => sh("git config user.name", true) || "Ghost",
 
-export function stageAll() {
-  shRun("git add .");
-}
+  diff: (staged = true) =>
+    sh(`git diff ${staged ? "--cached" : ""} --stat`, true),
 
-export function commit(message) {
-  shRun(`git commit -m "${message.replace(/"/g, '\\"')}"`);
-}
+  rawDiff: () => sh("git diff --cached", true),
 
-export function createTag(tag) {
-  shRun(`git tag -a ${tag} -m "${tag}"`);
-}
+  // Auto-stash for switching branches
+  stash: () => {
+    if (!git.isRepo()) return false;
+    const isDirty = sh("git status --porcelain", true).length > 0;
+    if (!isDirty) return false;
+    sh('git stash push -m "Otto Auto-Switch"', true);
+    return true;
+  },
 
-export function pushBranch() {
-  shRun("git push");
-}
+  // Manual stash with message
+  stashSave: (msg = "Otto Stash") => {
+    const isDirty = sh("git status --porcelain", true).length > 0;
+    if (!isDirty) throw new Error("No local changes to stash");
+    sh(`git stash push -m "${msg}"`);
+    return true;
+  },
 
-export function pushWithTags() {
-  shRun("git push && git push --tags");
-}
+  // List all stashes
+  stashList: () => {
+    const out = sh("git stash list", true);
+    if (!out) return [];
+    // Output: stash@{0}: On main: message...
+    return out.split("\n").map((line) => {
+      const firstColon = line.indexOf(":");
+      const ref = line.substring(0, firstColon);
+      const msg = line.substring(firstColon + 1).trim();
+      return { ref, msg };
+    });
+  },
+
+  pop: () => {
+    if (!git.isRepo()) return false;
+    try {
+      sh("git stash pop");
+      return true;
+    } catch {
+      return false;
+    }
+  },
+
+  log: (limit = 10) => {
+    if (!git.isRepo()) return [];
+    const out = sh(
+      `git log -n ${limit} --pretty=format:"%h|%s|%an|%ar"`,
+      true
+    );
+    if (!out) return [];
+    return out.split("\n").map((line) => {
+      const [hash, msg, author, time] = line.split("|");
+      return { hash, msg, author, time };
+    });
+  },
+};

@@ -1,31 +1,5 @@
-# Dependencies
-node_modules/
-
-# Environment
+node_modules
 .env
-.env.local
-.env.*.local
-
-# Build / output
-dist/
-build/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# OS
 .DS_Store
-Thumbs.db
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# Optional
-coverage/
-.nyc_output/
-*.tgz
+pnpm-debug.log
+npm-debug.log

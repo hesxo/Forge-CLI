@@ -1,46 +1,46 @@
-import fs from "fs";
-import os from "os";
-import path from "path";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
+import os from "os";
 
 dotenv.config();
 
-const HOME = os.homedir();
-const CONFIG_DIR = path.join(HOME, ".forge-cli");
+const HOMEDIR = os.homedir();
+const CONFIG_DIR = path.join(HOMEDIR, ".otto-cli");
 const CONFIG_FILE = path.join(CONFIG_DIR, "config.json");
 
-function loadConfigFile() {
-  if (!fs.existsSync(CONFIG_FILE)) return {};
-  try {
-    return JSON.parse(fs.readFileSync(CONFIG_FILE, "utf8"));
-  } catch {
-    return {};
+function loadGlobalConfig() {
+  if (fs.existsSync(CONFIG_FILE)) {
+    try {
+      return JSON.parse(fs.readFileSync(CONFIG_FILE, "utf8"));
+    } catch (e) {
+      return {};
+    }
   }
+  return {};
 }
 
-function saveConfigFile(data) {
+function saveGlobalConfig(newConfig) {
   if (!fs.existsSync(CONFIG_DIR)) {
     fs.mkdirSync(CONFIG_DIR, { recursive: true });
   }
-  fs.writeFileSync(CONFIG_FILE, JSON.stringify(data, null, 2));
+  fs.writeFileSync(CONFIG_FILE, JSON.stringify(newConfig, null, 2));
 }
 
-const stored = loadConfigFile();
+const globalConf = loadGlobalConfig();
 
-export let OPENAI_API_KEY = process.env.OPENAI_API_KEY || stored.OPENAI_API_KEY || "";
-export let RELEASE_LOG_WEBHOOK = process.env.RELEASE_LOG_WEBHOOK || stored.RELEASE_LOG_WEBHOOK || "";
-export let DEFAULT_TARGET_BRANCH = process.env.DEFAULT_TARGET_BRANCH || stored.DEFAULT_TARGET_BRANCH || "main";
+// --- Configuration & Helpers ---
+export let SHEET_WEBHOOK_URL =
+  process.env.GOOGLE_SHEET_WEBHOOK_URL || globalConf.GOOGLE_SHEET_WEBHOOK_URL;
+export let OPENAI_API_KEY =
+  process.env.OPENAI_API_KEY || globalConf.OPENAI_API_KEY;
+export const PM = fs.existsSync("pnpm-lock.yaml") ? "pnpm" : "npm";
 
 export function updateConfig(key, value) {
-  const current = loadConfigFile();
-  const next = { ...current, [key]: value };
-  saveConfigFile(next);
+  const current = loadGlobalConfig();
+  const updated = { ...current, [key]: value };
+  saveGlobalConfig(updated);
 
+  if (key === "GOOGLE_SHEET_WEBHOOK_URL") SHEET_WEBHOOK_URL = value;
   if (key === "OPENAI_API_KEY") OPENAI_API_KEY = value;
-  if (key === "RELEASE_LOG_WEBHOOK") RELEASE_LOG_WEBHOOK = value;
-  if (key === "DEFAULT_TARGET_BRANCH") DEFAULT_TARGET_BRANCH = value;
-}
-
-export function getConfig() {
-  return loadConfigFile();
 }
