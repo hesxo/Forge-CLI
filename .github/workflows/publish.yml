@@ -55,15 +55,13 @@ jobs:
           fi
           echo "$NAME@$VER not found on npm. Continuing."
 
-      - name: Ensure NPM token is configured
+      - name: Check NPM token (non-blocking)
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "ERROR: GitHub Actions secret NPM_TOKEN is not set or is empty."
-            echo "Create an npm automation token and add it as NPM_TOKEN in:"
-            echo "  Settings → Secrets and variables → Actions → New repository secret"
-            exit 1
+            echo "WARNING: GitHub Actions secret NPM_TOKEN is not set or is empty."
+            echo "npm publish will likely fail with ENEEDAUTH or E403 without valid credentials."
           fi
 
       - name: Publish
