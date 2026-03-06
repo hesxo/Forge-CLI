@@ -1,4 +1,4 @@
-name: Forge CLI - Publisher CI
+name: Forge CLI Publisher CI
 
 on:
   push:
@@ -35,8 +35,11 @@ jobs:
       - name: Show pnpm version
         run: pnpm -v
 
-      - name: Install dependencies
+      - name: Install
         run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
 
       - name: Show package name + version
         run: |
@@ -63,7 +66,7 @@ jobs:
             exit 1
           fi
 
-      - name: Publish to npm
+      - name: Publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --provenance --access public
