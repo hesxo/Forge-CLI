@@ -1,6 +1,6 @@
 {
   "name": "forge-cli",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "AI-powered Git Release & Automation Tool",
   "main": "index.js",
   "type": "module",
