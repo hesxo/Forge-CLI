@@ -1,5 +1,7 @@
 # Forge CLI
 
+**Forge CLI** by Hasal Dharmagunawardana
+
 > AI-Powered Git Automation & Release Tool
 
 `forge-cli` is a powerful Node.js CLI that automates your git workflow while keeping everything organized. It uses AI to help with release flows, simplifies branch management, and can automatically log every release to a Google Sheet.

@@ -21,7 +21,7 @@
     "ai",
     "automation"
   ],
-  "author": "Thevindu W.",
+  "author": "Hasal Dharmagunawardana",
   "license": "MIT",
   "dependencies": {
     "@clack/prompts": "^0.7.0",
