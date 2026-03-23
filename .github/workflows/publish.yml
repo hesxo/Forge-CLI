@@ -67,4 +67,6 @@ jobs:
           echo "$NAME@$VER not found on npm. Continuing."
 
       - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --provenance --access public
