@@ -75,6 +75,26 @@ jobs:
             echo "npm publish will likely fail with ENEEDAUTH or E403 without valid credentials."
           fi
 
+      - name: Validate npm auth identity
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "NPM_TOKEN is empty. Cannot publish."
+            exit 1
+          fi
+          USERNAME=$(npm whoami 2>/dev/null || true)
+          if [ -z "$USERNAME" ]; then
+            echo "npm authentication failed. Check NPM_TOKEN in the 'release' environment."
+            exit 1
+          fi
+          if [ "$USERNAME" != "hesxo" ]; then
+            echo "Authenticated as '$USERNAME' but expected 'hesxo'."
+            echo "Use an npm token from the owner account for @hesxo/forge-cli."
+            exit 1
+          fi
+          echo "npm auth OK as $USERNAME"
+
       - name: Publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
