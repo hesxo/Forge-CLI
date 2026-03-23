@@ -66,6 +66,9 @@ jobs:
           fi
           echo "$NAME@$VER not found on npm. Continuing."
 
+      # NPM_TOKEN must be CI-safe: npm "Automation" token, or a granular token with
+      # publish + bypass 2FA. If you see EOTP in logs, replace the secret and set
+      # npm 2FA to allow tokens (see docs/npm-ci-token.md).
       - name: Publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
