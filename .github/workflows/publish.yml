@@ -45,6 +45,17 @@ jobs:
         run: |
           node -p "require('./package.json').name + '@' + require('./package.json').version"
 
+      - name: Validate publish target
+        run: |
+          NAME=$(node -p "require('./package.json').name")
+          VER=$(node -p "require('./package.json').version")
+          if [ "$NAME" != "@hesxo/forge-cli" ]; then
+            echo "Refusing to publish unexpected package name: $NAME"
+            echo "Expected package name: @hesxo/forge-cli"
+            exit 1
+          fi
+          echo "Publishing target validated: $NAME@$VER"
+
       - name: Fail if version already exists on npm
         run: |
           NAME=$(node -p "require('./package.json').name")

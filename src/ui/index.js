@@ -11,7 +11,7 @@ export const ui = {
 
   banner: () => {
     console.clear();
-    intro(pc.bgCyan(pc.black(" Forge CLI ")));
+    intro(pc.bgCyan(pc.black(" Forge CLI by Hasal Dharmagunawardana ")));
 
     const user = git.user();
     const br = git.branch();

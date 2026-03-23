@@ -6,7 +6,7 @@
 
 `forge-cli` is a powerful Node.js CLI that automates your git workflow while keeping everything organized. It uses AI to help with release flows, simplifies branch management, and can automatically log every release to a Google Sheet.
 
-[![npm version](https://img.shields.io/npm/v/forge-cli.svg)](https://www.npmjs.com/package/forge-cli)
+[![npm version](https://img.shields.io/npm/v/@hesxo/forge-cli.svg)](https://www.npmjs.com/package/@hesxo/forge-cli)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Table of Contents
@@ -25,18 +25,18 @@
 You can run Forge directly without installation:
 
 ```bash
-npx forge-cli
+npx @hesxo/forge-cli
 ```
 
-Or install it globally for daily use:
+Or install it globally for daily use (run with `forge-cli`):
 
 ```bash
-npm install -g forge-cli
+npm install -g @hesxo/forge-cli
 # or
-pnpm add -g forge-cli
+pnpm add -g @hesxo/forge-cli
 ```
 
-Once installed, simply run `forge-cli` or `forge` in any git repository to start the interactive menu.
+Once installed, run `forge-cli` in any git repository to start the interactive menu.
 
 ---
 
